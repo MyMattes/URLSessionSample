@@ -16,14 +16,14 @@
 	return [self initWithURL:[NSURL URLWithString:@"https://www.google.com"] completionHandler:nil];
 }
 
-- (instancetype)initWithString:(NSString *)urlString completionHandler:(void (^)(BOOL success, NSError *error, NSString *result))completionHandler
+- (instancetype)initWithString:(NSString *)urlString completionHandler:(DGRequestCompletionHandler)completionHandler
 {
 	// Convenience initializer, working with a URL string
 
 	return [self initWithURL:[NSURL URLWithString:urlString] completionHandler:completionHandler];
 }
 
-- (instancetype)initWithURL:(NSURL *)url completionHandler:(void (^)(BOOL success, NSError *error, NSString *result))completionHandler
+- (instancetype)initWithURL:(NSURL *)url completionHandler:(DGRequestCompletionHandler)completionHandler
 {
 	// Designated initializer; remember the completionHandler, to be called once the reponse has been finished
 
