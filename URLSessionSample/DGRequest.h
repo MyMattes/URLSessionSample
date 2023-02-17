@@ -2,7 +2,9 @@
 
 @interface DGRequest : NSObject
 
-- (instancetype)initWithString:(NSString *)urlString completionHandler:(void (^)(BOOL success, NSError *error, NSString *result))completionHandler;
-- (instancetype)initWithURL:(NSURL *)url completionHandler:(void (^)(BOOL success, NSError *error, NSString *result))completionHandler;
+typedef void (^DGRequestCompletionHandler)(BOOL success, NSError *error, NSString *result);
+
+- (instancetype)initWithString:(NSString *)urlString completionHandler:(DGRequestCompletionHandler)completionHandler;
+- (instancetype)initWithURL:(NSURL *)url completionHandler:(DGRequestCompletionHandler)completionHandler;
 
 @end

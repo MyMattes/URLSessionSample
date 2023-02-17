@@ -2,8 +2,6 @@
 
 @interface DGRequest () <NSURLSessionDataDelegate>
 
-typedef void (^DGRequestCompletionHandler)(BOOL success, NSError *error, NSString *result);
-
 @property (strong) DGRequestCompletionHandler completionHandler;
 @property (strong) NSMutableData *responseData;
 
