@@ -32,11 +32,12 @@
 		self.completionHandler = completionHandler;
 
 		NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-	    request.HTTPMethod = @"GET";
+		request.HTTPMethod = @"GET";
 		NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
-	    NSURLSession *session = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+		NSURLSession *session = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:[NSOperationQueue mainQueue]];
 		NSURLSessionDataTask *task = [session dataTaskWithRequest:request];
 		[task resume];
+		NSLog(@"Requesting from \"%@\"", url);
 	}
 	return self;
 }
@@ -47,6 +48,8 @@
 {
 	// First reponse, initialize the data object to hold chunks
 
+	NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+	NSLog(@"... Received header from \"%@\" (status: %lu, fields: %@)", httpResponse.URL, httpResponse.statusCode, httpResponse.allHeaderFields);
 	self.responseData = [NSMutableData data];
 	completionHandler(NSURLSessionResponseAllow);
 }
@@ -55,6 +58,7 @@
 {
 	// Repetitive response, add chunk to data property
 
+	NSLog(@"... Received chunk (length: %lu)", data.length);
 	[self.responseData appendData:data];
 }
 
@@ -64,11 +68,12 @@
 
 	if (error)
 	{
+		NSLog(@"... Ended with error: %@", error);
 		self.responseData = nil;
 		if (self.completionHandler) self.completionHandler(FALSE, error, nil);
-    }
-    else
-    {
+	}
+	else
+	{
 		// Enforce a lossless encoding and prefer UTF-8, 8-bit ISO Latin 1, but try others; toggle flags for testing
 
 		NSDictionary *encodingOptions = @{
@@ -82,9 +87,9 @@
 		// Let Foundation determin the stringEncoding, indicating if it was a lossy conversion, refer to "NSString.h" & <https://developer.apple.com/documentation/foundation/nsstringencoding>
 
 		NSStringEncoding stringEncoding = [NSString stringEncodingForData:self.responseData encodingOptions:encodingOptions convertedString:&responseString usedLossyConversion:&usedLossyConverted];
-		NSLog(@"String converted, Encoding: %lu, wasLossyConverted: %i", stringEncoding, usedLossyConverted);
+		NSLog(@"... Ended sucessfully, result converted to string (length: %lu, encoding: %lu, wasLossyConverted: %i)", self.responseData.length, stringEncoding, usedLossyConverted);
 		if (self.completionHandler) self.completionHandler(TRUE, nil, responseString);
-    }
+	}
 }
 
 @end
