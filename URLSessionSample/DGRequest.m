@@ -69,7 +69,20 @@
     }
     else
     {
-    	NSString *responseString = [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+		// Enforce a lossless encoding and prefer UTF-8, 8-bit ISO Latin 1, but try others; toggle flags for testing
+
+		NSDictionary *encodingOptions = @{
+			NSStringEncodingDetectionAllowLossyKey : @(NO),
+			NSStringEncodingDetectionSuggestedEncodingsKey : @[@(NSUTF8StringEncoding), @(NSISOLatin1StringEncoding)],
+			NSStringEncodingDetectionUseOnlySuggestedEncodingsKey : @(NO)
+		};
+		NSString *responseString;
+		BOOL usedLossyConverted;
+
+		// Let Foundation determin the stringEncoding, indicating if it was a lossy conversion, refer to "NSString.h" & <https://developer.apple.com/documentation/foundation/nsstringencoding>
+
+		NSStringEncoding stringEncoding = [NSString stringEncodingForData:self.responseData encodingOptions:encodingOptions convertedString:&responseString usedLossyConversion:&usedLossyConverted];
+		NSLog(@"String converted, Encoding: %lu, wasLossyConverted: %i", stringEncoding, usedLossyConverted);
 		if (self.completionHandler) self.completionHandler(TRUE, nil, responseString);
     }
 }

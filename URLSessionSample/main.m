@@ -5,7 +5,7 @@ int main(int argc, const char * argv[])
 {
 	@autoreleasepool
 	{
-		NSString *urlString = @"https://www.stitchbuddy.de";
+		NSString *urlString = @"http://hape42.de/DG/test.html";
 		DGRequest *request = [[DGRequest alloc] initWithString:urlString completionHandler:^(BOOL success, NSError *error, NSString *result)
 		{
 			NSLog(@"Request to \"%@\" completed: %i", urlString, success);
